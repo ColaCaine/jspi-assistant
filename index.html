@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PWA Check</title>
+    <title>App Check</title>
     <style>
         body {
             font-family: sans-serif;
@@ -20,17 +20,28 @@
 </div>
 
 <script>
-    function isRunningAsPWA() {
-        return (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone === true);
+    function isApp() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.has('app=true');
     }
 
     const contentDiv = document.getElementById('content');
 
-    if (isRunningAsPWA()) {
-        contentDiv.innerHTML = "<h1>Welcome to the App!</h1><p>You're running this as a Progressive Web App.</p>";
+    if (isApp()) {
+        contentDiv.innerHTML = "<h1>Welcome to the App!</h1><p>You're running this as a saved page.</p>";
     } else {
-        contentDiv.innerHTML = "<h1>Download the App!</h1><p>This page works best as a Progressive Web App.</p><p>Install it for a better experience!</p>";
+        contentDiv.innerHTML = "<h1>Download the App!</h1><p>Use the browser's 'Add to Home Screen' or 'Save as App' to install.</p>";
     }
+
+    // Add the app parameter to the URL (if not already there)
+    if (!isApp()) {
+      if(window.location.search === ""){
+        window.history.replaceState({}, document.title, window.location.pathname + "?app=true");
+      } else {
+        window.history.replaceState({}, document.title, window.location.pathname + window.location.search + "&app=true");
+      }
+    }
+
 </script>
 
 </body>
