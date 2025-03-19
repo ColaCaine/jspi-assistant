@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PWA Check</title>
+<style>
+  body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="content">
+  </div>
+
+<script>
+  function isRunningAsPWA() {
+    return window.matchMedia('(display-mode: standalone)').matches;
+  }
+
+  const contentDiv = document.getElementById('content');
+
+  if (isRunningAsPWA()) {
+    // Show regular web app content
+    contentDiv.innerHTML = "<h1>Welcome to the App!</h1><p>You're running this as a Progressive Web App.</p>";
+  } else {
+    // Suggest downloading the app
+    contentDiv.innerHTML = "<h1>Download the App!</h1><p>This page works best as a Progressive Web App.</p><p>Install it for a better experience!</p>";
+  }
+</script>
+
+</body>
+</html>
