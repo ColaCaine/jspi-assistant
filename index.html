@@ -1,96 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSPI Help Assistant</title>
     <link rel="manifest" href="/manifest.json">
-
-    <title>App Check</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-    </style>
+    <link rel="icon" href="/icons/icon-192x192.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
-
-<div id="content">
-</div>
-
-<script>
-    function isApp() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.has('app=true');
-    }
-
-    const contentDiv = document.getElementById('content');
-
-    if (isApp()) {
-        contentDiv.innerHTML = "<h1>Welcome to the App!</h1><p>You're running this as a saved page.</p>";
-    } else {
-        contentDiv.innerHTML = "<h1>Download the App!</h1><p>Use the browser's 'Add to Home Screen' or 'Save as App' to install.</p>";
-    }
-
-    // Add the app parameter to the URL (if not already there)
-    if (!isApp()) {
-      if(window.location.search === ""){
-        window.history.replaceState({}, document.title, window.location.pathname + "?app=true");
-      } else {
-        window.history.replaceState({}, document.title, window.location.pathname + window.location.search + "&app=true");
-      }
-    }
-
-</script>
-<script>
-    let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent Chrome 67 and earlier from automatically showing the prompt
-  e.preventDefault();
-  // Stash the event so it can be triggered later.
-  deferredPrompt = e;
-  // Update UI to notify the user they can add to home screen
-  showInstallPromotion(); // We'll create this function below
-});
-
-function showInstallPromotion() {
-  const installButton = document.createElement('button');
-  installButton.textContent = 'Install App';
-  document.body.appendChild(installButton);
-
-  installButton.addEventListener('click', (e) => {
-    // Show the prompt
-    deferredPrompt.prompt();
-    // Wait for the user to respond to the prompt
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
-      } else {
-        console.log('User dismissed the install prompt');
-      }
-      deferredPrompt = null;
-      installButton.style.display = 'none'; // Hide the button after use
-    });
-  });
-}
-</script>
-        <script>
+    <h1>Welcome to JSPI Help Assistant</h1>
+    <p>This is a progressive web app example.</p>
+    <button id="installButton">Install App</button>
+    <script>
         if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-     // Registration was successful
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      // registration failed :(
-      console.log('ServiceWorker registration failed: ', err);
-    });
-  });
-}
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(error => {
+                console.log('Service Worker registration failed:', error);
+            });
+        }
+
+        let deferredPrompt;
+        const installButton = document.getElementById('installButton');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.style.display = 'block';
+        });
+
+        installButton.addEventListener('click', () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+                deferredPrompt = null;
+            });
+        });
     </script>
 </body>
-
 </html>
